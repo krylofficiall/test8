@@ -1,1 +1,1603 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Методологии: Теория в Действии</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --waterfall: #FF6B35;
+    --waterfall-light: #FFE5D9;
+    --agile: #10B981;
+    --agile-light: #D1FAE5;
+    --scrum: #3B82F6;
+    --scrum-light: #DBEAFE;
+    --lean: #A855F7;
+    --lean-light: #F3E8FF;
+    --yellow: #FCD34D;
+    --red: #EF4444;
+    --text: #1F2937;
+    --border: #E5E7EB;
+  }
 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Fredoka', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: background .5s;
+  }
+  body.menu { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  body.waterfall { background: var(--waterfall-light); }
+  body.agile { background: var(--agile-light); }
+  body.scrum { background: var(--scrum-light); }
+  body.lean { background: var(--lean-light); }
+
+  .container { width: 100%; max-width: 820px; }
+
+  /* ═══ MENU ═══ */
+  .screen { display: none; animation: fadeIn .4s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .menu-card {
+    background: white;
+    border-radius: 32px;
+    padding: 44px 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  }
+
+  .menu-title {
+    font-size: 34px;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .menu-sub {
+    text-align: center;
+    font-size: 15px;
+    color: #6B7280;
+    margin-bottom: 36px;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .game-card {
+    background: white;
+    border: 4px solid;
+    border-radius: 20px;
+    padding: 24px 18px;
+    cursor: pointer;
+    transition: all .25s;
+    position: relative;
+  }
+  .game-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0,0,0,.15);
+  }
+  .game-card.c-waterfall { border-color: var(--waterfall); background: linear-gradient(135deg, #FFF5F0, #FFE5D9); }
+  .game-card.c-agile { border-color: var(--agile); background: linear-gradient(135deg, #F0FFF4, #D1FAE5); }
+  .game-card.c-scrum { border-color: var(--scrum); background: linear-gradient(135deg, #EFF6FF, #DBEAFE); }
+  .game-card.c-lean { border-color: var(--lean); background: linear-gradient(135deg, #FAF5FF, #F3E8FF); }
+
+  .game-icon {
+    font-size: 52px;
+    text-align: center;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .game-name {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .game-desc {
+    font-size: 13px;
+    color: #6B7280;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .game-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--yellow);
+    color: #92400E;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: .3px;
+  }
+
+  /* ═══ GAME HEADER ═══ */
+  .game-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .back-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 3px solid var(--border);
+    background: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .15s;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { transform: scale(1.08); }
+
+  .progress-wrap {
+    flex: 1;
+    background: white;
+    border: 3px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 12px;
+  }
+  .progress-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9CA3AF;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .progress-bar-bg {
+    height: 10px;
+    background: #F3F4F6;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    border-radius: 99px;
+    transition: width .4s ease;
+  }
+  body.waterfall .progress-bar { background: var(--waterfall); }
+  body.agile .progress-bar { background: var(--agile); }
+  body.scrum .progress-bar { background: var(--scrum); }
+  body.lean .progress-bar { background: var(--lean); }
+
+  .score {
+    background: white;
+    border: 3px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 17px;
+    font-weight: 700;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  /* ═══ TASK CARD ═══ */
+  .task-card {
+    background: white;
+    border-radius: 24px;
+    padding: 26px;
+    border: 4px solid;
+    box-shadow: 0 10px 30px rgba(0,0,0,.1);
+    margin-bottom: 14px;
+  }
+  body.waterfall .task-card { border-color: var(--waterfall); }
+  body.agile .task-card { border-color: var(--agile); }
+  body.scrum .task-card { border-color: var(--scrum); }
+  body.lean .task-card { border-color: var(--lean); }
+
+  .task-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .task-icon { font-size: 44px; flex-shrink: 0; }
+  .task-info { flex: 1; }
+  .task-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 4px;
+  }
+  .task-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .task-scenario {
+    background: #F9FAFB;
+    border-left: 4px solid #D1D5DB;
+    border-radius: 12px;
+    padding: 15px 16px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  body.waterfall .task-scenario { background: #FFF5F0; border-color: var(--waterfall); }
+  body.agile .task-scenario { background: #F0FFF4; border-color: var(--agile); }
+  body.scrum .task-scenario { background: #EFF6FF; border-color: var(--scrum); }
+  body.lean .task-scenario { background: #FAF5FF; border-color: var(--lean); }
+  .task-scenario strong { font-weight: 700; }
+  .task-scenario em { font-style: italic; color: #6B7280; }
+
+  .task-question {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  /* ═══ CHOICE ═══ */
+  .choices {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .choice {
+    background: white;
+    border: 3px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all .2s;
+  }
+  .choice:hover:not(.correct):not(.wrong):not(:disabled) {
+    border-color: #9CA3AF;
+    transform: translateX(4px);
+  }
+  .choice-ltr {
+    width: 28px;
+    height: 28px;
+    background: #F3F4F6;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .choice.selected { border-color: #3B82F6; background: #EFF6FF; }
+  .choice.selected .choice-ltr { background: #3B82F6; color: white; }
+  .choice.correct { border-color: #10B981; background: #D1FAE5; }
+  .choice.correct .choice-ltr { background: #10B981; color: white; }
+  .choice.wrong { border-color: #EF4444; background: #FEE2E2; }
+  .choice.wrong .choice-ltr { background: #EF4444; color: white; }
+  .choice:disabled { cursor: default; transform: none !important; }
+
+  /* ═══ SORTING (drag & drop) ═══ */
+  .sort-pool {
+    background: #F9FAFB;
+    border: 3px dashed #D1D5DB;
+    border-radius: 14px;
+    padding: 16px;
+    min-height: 120px;
+    margin-bottom: 14px;
+  }
+  .sort-item {
+    background: white;
+    border: 3px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    cursor: move;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all .2s;
+  }
+  .sort-item:hover { border-color: #9CA3AF; transform: scale(1.02); }
+  .sort-item.dragging { opacity: 0.5; }
+  .sort-item-icon { font-size: 20px; }
+
+  .sort-slots {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .sort-slot {
+    background: white;
+    border: 3px dashed #D1D5DB;
+    border-radius: 12px;
+    padding: 14px;
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all .2s;
+  }
+  .sort-slot.over { background: #EFF6FF; border-color: #3B82F6; border-style: solid; }
+  .sort-slot.filled { border-style: solid; border-color: #10B981; }
+  .sort-slot-num {
+    width: 26px;
+    height: 26px;
+    background: #F3F4F6;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ═══ MATCHING ═══ */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .match-col {
+    display: grid;
+    gap: 8px;
+  }
+  .match-item {
+    background: white;
+    border: 3px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .match-item:hover:not(.matched) { border-color: #9CA3AF; }
+  .match-item.selected { border-color: #3B82F6; background: #EFF6FF; }
+  .match-item.matched { border-color: #10B981; background: #D1FAE5; cursor: default; }
+  .match-icon { font-size: 20px; }
+
+  /* ═══ TRUE/FALSE ═══ */
+  .tf-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .tf-btn {
+    background: white;
+    border: 4px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    transition: all .2s;
+  }
+  .tf-btn:hover:not(.correct):not(.wrong):not(:disabled) {
+    border-color: #9CA3AF;
+    transform: scale(1.03);
+  }
+  .tf-icon { font-size: 36px; display: block; margin-bottom: 6px; }
+  .tf-btn.selected { border-color: #3B82F6; background: #EFF6FF; }
+  .tf-btn.correct { border-color: #10B981; background: #D1FAE5; }
+  .tf-btn.wrong { border-color: #EF4444; background: #FEE2E2; }
+  .tf-btn:disabled { cursor: default; transform: none !important; }
+
+  /* ═══ FEEDBACK ═══ */
+  .feedback {
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: none;
+    animation: slideUp .3s ease;
+  }
+  .feedback.show { display: block; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .feedback.correct { background: #D1FAE5; border: 3px solid #10B981; }
+  .feedback.wrong { background: #FEE2E2; border: 3px solid #EF4444; }
+  .feedback-hdr {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .feedback.correct .feedback-hdr { color: #065F46; }
+  .feedback.wrong .feedback-hdr { color: #991B1B; }
+  .feedback-icon { font-size: 22px; }
+  .feedback-text {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #374151;
+  }
+  .feedback-text strong { font-weight: 700; }
+
+  /* ═══ ACTIONS ═══ */
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .btn {
+    padding: 13px 26px;
+    border-radius: 13px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+  .btn-check {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
+  }
+  .btn-check:disabled {
+    background: #D1D5DB;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-next {
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    color: white;
+  }
+
+  /* ═══ FINAL ═══ */
+  .final-card {
+    background: white;
+    border-radius: 28px;
+    padding: 36px 28px;
+    text-align: center;
+    border: 4px solid var(--border);
+    box-shadow: 0 12px 40px rgba(0,0,0,.15);
+  }
+  .final-emoji { font-size: 72px; margin-bottom: 12px; display: block; }
+  .final-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .final-sub { font-size: 15px; color: #6B7280; margin-bottom: 24px; line-height: 1.5; }
+  .final-score-box {
+    background: #F9FAFB;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 24px;
+  }
+  .final-score-big { font-size: 44px; font-weight: 700; margin-bottom: 4px; }
+  body.waterfall .final-score-big { color: var(--waterfall); }
+  body.agile .final-score-big { color: var(--agile); }
+  body.scrum .final-score-big { color: var(--scrum); }
+  body.lean .final-score-big { color: var(--lean); }
+  .final-score-label { font-size: 13px; color: #6B7280; font-weight: 600; }
+
+  .insight {
+    background: #FEF3C7;
+    border: 3px solid #FCD34D;
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-align: left;
+    margin-bottom: 20px;
+  }
+  .insight-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #92400E;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .insight-text { font-size: 13px; line-height: 1.6; color: #78350F; }
+
+  @media (max-width: 640px) {
+    .games-grid { grid-template-columns: 1fr; }
+    .match-grid { grid-template-columns: 1fr; }
+    .tf-btns { grid-template-columns: 1fr; }
+    .task-card { padding: 18px; }
+  }
+</style>
+</head>
+<body class="menu">
+
+<div class="container">
+
+<!-- ════════════════════════════════════════
+     MENU
+    ════════════════════════════════════════ -->
+<div class="screen active" id="menuScreen">
+  <div class="menu-card">
+    <div class="menu-title">🎯 Методологии: Теория</div>
+    <p class="menu-sub">Проверь свои знания! 4 игры — 4 методологии</p>
+
+    <div class="games-grid">
+      <div class="game-card c-waterfall" onclick="startGame('waterfall')">
+        <div class="game-badge">~8 МИН</div>
+        <span class="game-icon">🏗️</span>
+        <div class="game-name">Waterfall</div>
+        <p class="game-desc">Водопад: последовательность и план</p>
+      </div>
+
+      <div class="game-card c-agile" onclick="startGame('agile')">
+        <div class="game-badge">~8 МИН</div>
+        <span class="game-icon">🔄</span>
+        <div class="game-name">Agile</div>
+        <p class="game-desc">Гибкость: итерации и адаптация</p>
+      </div>
+
+      <div class="game-card c-scrum" onclick="startGame('scrum')">
+        <div class="game-badge">~8 МИН</div>
+        <span class="game-icon">🏃</span>
+        <div class="game-name">Scrum</div>
+        <p class="game-desc">Спринты: роли и ритуалы</p>
+      </div>
+
+      <div class="game-card c-lean" onclick="startGame('lean')">
+        <div class="game-badge">~8 МИН</div>
+        <span class="game-icon">💡</span>
+        <div class="game-name">Lean Startup</div>
+        <p class="game-desc">Стартап: MVP и эксперименты</p>
+      </div>
+    </div>
+
+    <div style="background:#F9FAFB; border-radius:12px; padding:12px; font-size:12px; color:#6B7280; line-height:1.5;">
+      💡 <strong>Подсказка:</strong> Игры тестируют теорию через реальные кейсы. Проходи все!
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     GAME SCREEN
+    ════════════════════════════════════════ -->
+<div class="screen" id="gameScreen">
+  <div class="game-header">
+    <button class="back-btn" onclick="backToMenu()">←</button>
+    <div class="progress-wrap">
+      <div class="progress-label" id="progressLabel">ПРОГРЕСС</div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar" id="progressBar" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="score" id="score">0/0</div>
+  </div>
+
+  <div id="taskContainer"></div>
+</div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  WATERFALL QUESTIONS
+// ════════════════════════════════════════════════════════════════
+const WATERFALL = [
+  {
+    type: 'choice',
+    icon: '📋',
+    title: 'Главный принцип Waterfall',
+    scenario: 'Команда начинает VR-проект по методу Waterfall. Менеджер говорит: <strong>«Мы работаем последовательными этапами — нельзя вернуться назад!»</strong>',
+    question: 'Что это означает на практике?',
+    options: [
+      'Можно начать следующий этап, не закончив предыдущий',
+      'Каждый этап начинается только после 100% завершения предыдущего',
+      'Можно вернуться на любой этап в любой момент',
+      'Все этапы выполняются параллельно'
+    ],
+    correct: 1,
+    explanation: '✅ В Waterfall этапы идут строго последовательно: Требования → Дизайн → Разработка → Тестирование → Релиз. Нельзя начать Разработку, пока Дизайн не завершён на 100%! Как водопад — вода течёт только вниз.'
+  },
+
+  {
+    type: 'sort',
+    icon: '📐',
+    title: 'Этапы Waterfall',
+    scenario: 'Компания делает медицинское VR-приложение. Безопасность критична! <strong>Нужно расставить этапы Waterfall в правильном порядке.</strong>',
+    question: 'Перетащи этапы в правильной последовательности:',
+    items: [
+      { id: 'req', text: '📋 Сбор требований', icon: '📋', order: 0 },
+      { id: 'design', text: '🎨 Проектирование', icon: '🎨', order: 1 },
+      { id: 'dev', text: '⚙️ Разработка', icon: '⚙️', order: 2 },
+      { id: 'test', text: '🧪 Тестирование', icon: '🧪', order: 3 },
+      { id: 'deploy', text: '🚀 Внедрение', icon: '🚀', order: 4 }
+    ],
+    explanation: '✅ Правильно! 1️⃣ Требования (что делать?) 2️⃣ Дизайн (как будет выглядеть?) 3️⃣ Разработка (кодим) 4️⃣ Тестирование (ищем баги) 5️⃣ Внедрение (выпускаем). Назад дороги нет!'
+  },
+
+  {
+    type: 'truefalse',
+    icon: '🤔',
+    title: 'Изменения в Waterfall',
+    scenario: 'Проект на 50% готовности. Заказчик: <strong>«Хочу добавить новую функцию!»</strong> Команда: <em>«Это будет очень дорого и долго...»</em>',
+    question: 'Правда или ложь: В Waterfall легко вносить изменения на поздних этапах?',
+    correctAnswer: false,
+    explanation: '❌ ЛОЖЬ! Это главный минус Waterfall — изменения на поздних этапах крайне дорогие! Всё спланировано заранее. Новая функция = переделывать дизайн, код, тесты. Agile гибче!'
+  },
+
+  {
+    type: 'choice',
+    icon: '📝',
+    title: 'Документация в Waterfall',
+    scenario: 'После завершения проекта команда потратила неделю на составление документации: чертежи, техдокументация, инструкции.',
+    question: 'Зачем в Waterfall нужна подробная документация?',
+    options: [
+      'Это просто бюрократия, можно не делать',
+      'Для будущей поддержки: через год нужно будет понять, как всё работает',
+      'Только для больших компаний',
+      'Чтобы потратить время'
+    ],
+    correct: 1,
+    explanation: '✅ Документация критически важна! Через год придёт новый программист — как он поймёт код без документации? Waterfall = всё задокументировано.'
+  },
+
+  {
+    type: 'choice',
+    icon: '⏰',
+    title: 'Когда клиент видит результат?',
+    scenario: 'VR-проект длится 6 месяцев. Клиент спрашивает: <strong>«Когда я смогу посмотреть, что получается?»</strong>',
+    question: 'В Waterfall клиент видит результат:',
+    options: [
+      'Каждую неделю показывают прогресс',
+      'После каждого этапа (дизайн, разработка...)',
+      'Только в самом конце, когда всё готово',
+      'Когда захочет — в любой момент'
+    ],
+    correct: 2,
+    explanation: '✅ В классическом Waterfall результат показывают ТОЛЬКО В КОНЦЕ! Это минус — если клиенту не понравится, поздно менять. Agile показывает каждые 2 недели.'
+  },
+
+  {
+    type: 'match',
+    icon: '⚖️',
+    title: 'Плюсы и минусы Waterfall',
+    scenario: 'Директор выбирает методологию для нового проекта. Нужно понимать сильные и слабые стороны Waterfall.',
+    question: 'Соедини утверждения с оценкой:',
+    pairs: [
+      { left: 'Всё спланировано заранее — точный бюджет', leftId: 'plan', right: '✅ Плюс', rightId: 'plus1' },
+      { left: 'Изменения дорогие и долгие', leftId: 'change', right: '❌ Минус', rightId: 'minus1' },
+      { left: 'Клиент видит результат только в конце', leftId: 'late', right: '❌ Минус', rightId: 'minus2' },
+      { left: 'Подходит для проектов где нельзя ошибиться', leftId: 'safe', right: '✅ Плюс', rightId: 'plus2' }
+    ],
+    explanation: '✅ Плюсы Waterfall: чёткий план, точный бюджет, подходит для строительства/авиации. Минусы: негибкий, поздние ошибки дорогие, клиент долго ждёт результат.'
+  },
+
+  {
+    type: 'choice',
+    icon: '🎯',
+    title: 'Когда использовать Waterfall?',
+    scenario: 'У тебя 4 проекта. Нужно выбрать методологию для каждого.',
+    question: 'Для какого проекта идеально подходит Waterfall?',
+    options: [
+      'Стартап с неизвестной идеей — нужно быстро тестировать',
+      'Строительство моста — требования чёткие, ошибки недопустимы',
+      'Мобильное приложение — требования могут меняться',
+      'VR-игра — нужна обратная связь от игроков'
+    ],
+    correct: 1,
+    explanation: '✅ Мост! Waterfall = для проектов где: 1) Требования известны заранее 2) Нельзя ошибиться 3) Дорого менять план. Строительство, авиация, медтехника. НЕ для стартапов!'
+  },
+
+  {
+    type: 'truefalse',
+    icon: '💰',
+    title: 'Бюджет в Waterfall',
+    scenario: 'Проект стоит 10 млн руб. по плану. В конце вышло 10.1 млн — почти точно!',
+    question: 'Правда или ложь: Waterfall позволяет точно рассчитать бюджет заранее?',
+    correctAnswer: true,
+    explanation: '✅ ПРАВДА! Если требования не меняются — Waterfall даёт точный бюджет. Всё спланировано → можешь посчитать. НО если клиент меняет требования → бюджет взлетает!'
+  },
+
+  {
+    type: 'choice',
+    icon: '🐛',
+    title: 'Тестирование в Waterfall',
+    scenario: 'Этап тестирования начался после 5 месяцев разработки. Нашли критический баг в архитектуре!',
+    question: 'В чём проблема тестирования в конце?',
+    options: [
+      'Нет проблем — так и надо',
+      'Ошибки находятся поздно → дорого исправлять (переделывать много кода)',
+      'Тестировщики бездельничали 5 месяцев',
+      'Тестирование не нужно в Waterfall'
+    ],
+    correct: 1,
+    explanation: '✅ Это главная проблема! Ошибку в архитектуре нашли через 5 месяцев — теперь переделывать половину проекта! В Agile тестируют на каждой итерации → ошибки находят быстро.'
+  },
+
+  {
+    type: 'choice',
+    icon: '🏆',
+    title: 'Waterfall vs Agile',
+    scenario: 'Финальный вопрос! Директор спрашивает: <strong>«Чем Waterfall отличается от Agile?»</strong>',
+    question: 'Главное отличие:',
+    options: [
+      'Waterfall быстрее Agile',
+      'Waterfall = план не меняется, этапы последовательны. Agile = гибкий, итерации, изменения приветствуются',
+      'Waterfall для маленьких проектов, Agile для больших',
+      'Waterfall новый, Agile устаревший'
+    ],
+    correct: 1,
+    explanation: '🏆 Именно! Waterfall = жёсткий план, последовательность, дорогие изменения. Agile = гибкость, итерации 1-2 недели, легко менять. Waterfall для стройки, Agile для стартапов!'
+  }
+];
+
+// ════════════════════════════════════════════════════════════════
+//  AGILE QUESTIONS
+// ════════════════════════════════════════════════════════════════
+const AGILE = [
+  {
+    type: 'choice',
+    icon: '🔄',
+    title: 'Что такое Agile?',
+    scenario: 'Команда начинает работать по Agile. <strong>Менеджер объясняет философию.</strong>',
+    question: 'Agile — это:',
+    options: [
+      'Конкретная методология с чёткими правилами',
+      'Философия и принципы гибкой разработки',
+      'Программа для управления проектами',
+      'Новое название Waterfall'
+    ],
+    correct: 1,
+    explanation: '✅ Agile = ФИЛОСОФИЯ, набор принципов! Это НЕ конкретная методология. Scrum, Kanban = конкретные реализации Agile-философии.'
+  },
+
+  {
+    type: 'choice',
+    icon: '📜',
+    title: 'Agile Manifesto (2001 год)',
+    scenario: 'В 2001 году 17 разработчиков создали <strong>Agile Manifesto</strong> — 4 ценности гибкой разработки.',
+    question: 'Какая из этих ценностей есть в Agile Manifesto?',
+    options: [
+      'Документация важнее работающего продукта',
+      'Люди и взаимодействие важнее процессов и инструментов',
+      'Следование плану важнее реакции на изменения',
+      'Контракты важнее сотрудничества с заказчиком'
+    ],
+    correct: 1,
+    explanation: '✅ Верно! 4 ценности Agile Manifesto: 1) Люди > процессы 2) Работающий продукт > документация 3) Сотрудничество > контракты 4) Реакция на изменения > следование плану'
+  },
+
+  {
+    type: 'choice',
+    icon: '⏱️',
+    title: 'Итерации в Agile',
+    scenario: 'Команда работает <strong>итерациями по 2 недели</strong>. Каждая итерация = маленький цикл разработки.',
+    question: 'Что происходит в конце каждой итерации?',
+    options: [
+      'Ничего — продолжаем работать',
+      'Показываем рабочий результат, получаем обратную связь, корректируем план',
+      'Пишем документацию',
+      'Переходим на другой проект'
+    ],
+    correct: 1,
+    explanation: '✅ Итерация = цикл: План → Разработка → Тест → Показ → Обратная связь → Корректировка. В конце ОБЯЗАТЕЛЬНО показываем результат и корректируем!'
+  },
+
+  {
+    type: 'truefalse',
+    icon: '📋',
+    title: 'План в Agile',
+    scenario: 'Менеджер: <strong>«В Agile план меняется каждую итерацию в зависимости от обратной связи!»</strong>',
+    question: 'Правда или ложь: В Agile план можно и нужно менять?',
+    correctAnswer: true,
+    explanation: '✅ ПРАВДА! «Реакция на изменения важнее следования плану» — это Agile Manifesto. План гибкий! Данные показывают новое → меняем план.'
+  },
+
+  {
+    type: 'match',
+    icon: '⚖️',
+    title: 'Agile vs Waterfall',
+    scenario: 'Директор сравнивает две методологии для выбора подходящей.',
+    question: 'Соедини характеристики с методологиями:',
+    pairs: [
+      { left: 'План утверждён заранее', leftId: 'plan', right: 'Waterfall', rightId: 'water' },
+      { left: 'Гибкость и изменения', leftId: 'flex', right: 'Agile', rightId: 'agile' },
+      { left: 'Результат только в конце', leftId: 'end', right: 'Waterfall', rightId: 'water2' },
+      { left: 'Итерации 1-2 недели', leftId: 'iter', right: 'Agile', rightId: 'agile2' }
+    ],
+    explanation: '✅ Waterfall = план заранее, результат в конце. Agile = гибкость, итерации, постоянная обратная связь!'
+  },
+
+  {
+    type: 'choice',
+    icon: '👥',
+    title: 'Команды в Agile',
+    scenario: 'В Agile команды <strong>самоорганизуются</strong> — сами решают КАК делать работу.',
+    question: 'Что означает «самоорганизация»?',
+    options: [
+      'Команда работает без менеджера вообще — хаос',
+      'Менеджер говорит ЧТО делать, команда решает КАК',
+      'Каждый делает что хочет',
+      'Команда выбирает проект'
+    ],
+    correct: 1,
+    explanation: '✅ Самоорганизация: менеджер/Product Owner говорит ЧТО нужно, команда сама решает КАК! Доверие к команде, нет микроменеджмента.'
+  },
+
+  {
+    type: 'truefalse',
+    icon: '📊',
+    title: 'Обратная связь',
+    scenario: 'Команда показывает MVP через 2 недели. Клиент: <strong>«Не то! Хочу по-другому!»</strong> Команда: <em>«Хорошо, изменим!»</em>',
+    question: 'Правда или ложь: В Agile обратная связь от клиента — главное?',
+    correctAnswer: true,
+    explanation: '✅ ПРАВДА! Agile = сотрудничество с заказчиком! Показываем часто → получаем обратную связь → корректируем. Не гадаем что нужно — СПРАШИВАЕМ!'
+  },
+
+  {
+    type: 'choice',
+    icon: '🎯',
+    title: 'Когда использовать Agile?',
+    scenario: 'У тебя 4 проекта. Нужно выбрать методологию.',
+    question: 'Для какого проекта идеально подходит Agile?',
+    options: [
+      'Строительство небоскрёба — план чёткий',
+      'Стартап делает мобильное приложение — требования могут меняться',
+      'Производство ракеты — ошибки недопустимы',
+      'Медицинское оборудование — строгие требования'
+    ],
+    correct: 1,
+    explanation: '✅ Стартап! Agile = для проектов где: 1) Требования могут меняться 2) Нужна обратная связь 3) Изменчивая среда. Приложения, игры, стартапы. НЕ для ракет!'
+  },
+
+  {
+    type: 'choice',
+    icon: '🧪',
+    title: 'Тестирование в Agile',
+    scenario: 'В Agile тестирование происходит <strong>на каждой итерации</strong>, а не в конце как в Waterfall.',
+    question: 'Зачем тестировать так часто?',
+    options: [
+      'Тестировщикам нужна работа',
+      'Ошибки находятся рано → дешевле исправлять',
+      'Это дольше, но красивее',
+      'Тестирование не нужно в Agile'
+    ],
+    correct: 1,
+    explanation: '✅ Ошибка найдена через 2 недели → исправить легко. Ошибка найдена через 6 месяцев (как в Waterfall) → переделывать много! Agile = ранее тестирование.'
+  },
+
+  {
+    type: 'choice',
+    icon: '🏆',
+    title: 'Ключ к успеху Agile',
+    scenario: 'Финальный вопрос! <strong>Что самое важное в Agile?</strong>',
+    question: 'Главный принцип Agile:',
+    options: [
+      'Написать много документации',
+      'Следовать плану любой ценой',
+      'Быть гибким: реагировать на изменения, слушать обратную связь',
+      'Делать всё максимально быстро'
+    ],
+    correct: 2,
+    explanation: '🏆 Гибкость! Agile = адаптация к изменениям. Рынок изменился? Меняем план. Клиент передумал? Корректируем. Нашли ошибку? Исправляем сразу. Гибкость — сила!'
+  }
+];
+
+// ════════════════════════════════════════════════════════════════
+//  SCRUM QUESTIONS
+// ════════════════════════════════════════════════════════════════
+const SCRUM = [
+  {
+    type: 'choice',
+    icon: '🏃',
+    title: 'Что такое Scrum?',
+    scenario: 'Компания переходит на Scrum. <strong>Менеджер объясняет команде.</strong>',
+    question: 'Scrum — это:',
+    options: [
+      'То же самое что Agile — синонимы',
+      'Конкретная реализация Agile-принципов с чёткими ролями и правилами',
+      'Новая методология, не связанная с Agile',
+      'Программа для управления задачами'
+    ],
+    correct: 1,
+    explanation: '✅ Scrum = конкретный фреймворк внутри Agile! Agile = философия («будь гибким»). Scrum = конкретные правила («вот КАК быть гибким: спринты, роли, встречи»).'
+  },
+
+  {
+    type: 'choice',
+    icon: '⏰',
+    title: 'Что такое спринт?',
+    scenario: 'Команда работает <strong>спринтами по 2 недели</strong>. Это основа Scrum!',
+    question: 'Спринт — это:',
+    options: [
+      'Месячный марафон работы',
+      'Фиксированный период 1-2 недели, в конце которого готов рабочий продукт',
+      'Встреча команды каждый день',
+      'Список задач в проекте'
+    ],
+    correct: 1,
+    explanation: '✅ Спринт = 1-2 недели ФИКСИРОВАННО! Нельзя продлить или сократить. В конце спринта ОБЯЗАТЕЛЬНО рабочий результат (можно показать клиенту).'
+  },
+
+  {
+    type: 'sort',
+    icon: '📅',
+    title: 'События спринта',
+    scenario: 'Спринт длится 2 недели (10 дней). <strong>Расставь события в правильном порядке!</strong>',
+    question: 'Перетащи события спринта по порядку:',
+    items: [
+      { id: 'plan', text: 'Sprint Planning', icon: '📋', order: 0 },
+      { id: 'daily', text: 'Daily Standup (каждый день)', icon: '☀️', order: 1 },
+      { id: 'review', text: 'Sprint Review', icon: '🎯', order: 2 },
+      { id: 'retro', text: 'Sprint Retrospective', icon: '🔍', order: 3 },
+    ],
+    explanation: '✅ Порядок: 1️⃣ Planning (выбираем задачи) 2️⃣ Daily Standup каждый день работы 3️⃣ Review (показываем результат) 4️⃣ Retrospective (обсуждаем процесс)'
+  },
+
+  {
+    type: 'match',
+    icon: '👥',
+    title: 'Три роли в Scrum',
+    scenario: 'В Scrum строго <strong>3 роли</strong>. Каждая важна!',
+    question: 'Соедини роли с их функциями:',
+    pairs: [
+      { left: 'Product Owner', leftId: 'po', right: 'Решает ЧТО делать, приоритеты', rightId: 'what' },
+      { left: 'Scrum Master', leftId: 'sm', right: 'Следит за процессом, убирает проблемы', rightId: 'how' },
+      { left: 'Development Team', leftId: 'dev', right: 'Делает работу, сама решает КАК', rightId: 'work' }
+    ],
+    explanation: '✅ Product Owner = ЧТО (бэклог, приоритеты). Scrum Master = процесс (встречи, помощь). Dev Team = КАК и делает работу!'
+  },
+
+  {
+    type: 'choice',
+    icon: '📋',
+    title: 'Product Owner',
+    scenario: 'Product Owner ведёт <strong>Product Backlog</strong> — список всех задач проекта.',
+    question: 'Кто решает приоритеты задач в Scrum?',
+    options: [
+      'Самый опытный программист',
+      'Директор компании',
+      'Product Owner — единственный!',
+      'Команда голосует'
+    ],
+    correct: 2,
+    explanation: '✅ ТОЛЬКО Product Owner! Это его главная функция. Программист говорит «хочу красивый код»? Директор «хочу меню»? Неважно! PO решает что в приоритете!'
+  },
+
+  {
+    type: 'choice',
+    icon: '☀️',
+    title: 'Daily Standup',
+    scenario: 'Каждое утро команда проводит <strong>Daily Standup</strong> — короткую встречу.',
+    question: 'Как проходит правильный Daily Standup?',
+    options: [
+      '1 час сидя, обсуждение стратегии',
+      '15 минут СТОЯ, каждый отвечает: что делал вчера / что буду сегодня / есть ли проблемы',
+      'Весь день — continuous meeting',
+      'Раз в неделю 2 часа'
+    ],
+    correct: 1,
+    explanation: '✅ Daily Standup = 15 минут МАКСИМУМ, СТОЯ (чтоб не затягивали)! Три вопроса: вчера? сегодня? проблемы? Всё! Детали — после, отдельно.'
+  },
+
+  {
+    type: 'truefalse',
+    icon: '🚫',
+    title: 'Прерывание спринта',
+    scenario: 'Идёт 5-й день спринта (из 10). Директор: <strong>«СТОП! Срочная задача! Бросайте всё!»</strong> Scrum Master: <em>«Подождёт 5 дней.»</em>',
+    question: 'Правда или ложь: В Scrum спринт нельзя прерывать?',
+    correctAnswer: true,
+    explanation: '✅ ПРАВДА! Спринт = обязательство на 2 недели. Прерывать НЕЛЬЗЯ! Иначе хаос: ни одна задача не доделана. Срочное? Добавим в следующий спринт через 5 дней!'
+  },
+
+  {
+    type: 'choice',
+    icon: '🎯',
+    title: 'Sprint Review',
+    scenario: 'В конце спринта — <strong>Sprint Review</strong>: показываем результат заказчику.',
+    question: 'Что происходит на Sprint Review?',
+    options: [
+      'Команда обсуждает внутренние проблемы',
+      'Показываем РАБОЧИЙ продукт заказчику, получаем обратную связь',
+      'Планируем следующий спринт',
+      'Пишем отчёты'
+    ],
+    correct: 1,
+    explanation: '✅ Sprint Review = демо для заказчика! Показываем ЧТО сделали (только работающий продукт!). Клиент даёт обратную связь → меняем бэклог.'
+  },
+
+  {
+    type: 'choice',
+    icon: '🔍',
+    title: 'Sprint Retrospective',
+    scenario: 'После Review — <strong>Retrospective</strong>: команда БЕЗ заказчика обсуждает процесс.',
+    question: 'О чём говорят на Retrospective?',
+    options: [
+      'Показывают продукт клиенту',
+      'Обсуждают ЧТО делать дальше (задачи)',
+      'Обсуждают КАК работали: что улучшить в процессе',
+      'Ничего — просто формальность'
+    ],
+    correct: 2,
+    explanation: '✅ Retrospective = про ПРОЦЕСС! Что было хорошо? Что плохо? Как улучшить? НЕ про задачи, а про то КАК работаем. Команда сама улучшает процесс!'
+  },
+
+  {
+    type: 'choice',
+    icon: '🏆',
+    title: 'Когда использовать Scrum?',
+    scenario: 'Финальный вопрос! <strong>Для какого проекта идеален Scrum?</strong>',
+    question: 'Scrum подходит для:',
+    options: [
+      'Один человек делает небольшой сайт',
+      'Команда 5-7 человек разрабатывает VR-приложение, нужны структура и гибкость',
+      'Строительство моста — чёткий план',
+      'Стартап с неизвестной идеей'
+    ],
+    correct: 1,
+    explanation: '🏆 Команда 5-7 человек + нужна структура = Scrum! Для одного человека Scrum избыточен. Для стройки — Waterfall. Для стартапа с неизвестной идеей — Lean Startup!'
+  }
+];
+
+// ════════════════════════════════════════════════════════════════
+//  LEAN STARTUP QUESTIONS
+// ════════════════════════════════════════════════════════════════
+const LEAN_STARTUP = [
+  {
+    type: 'choice',
+    icon: '💡',
+    title: 'Что такое Lean Startup?',
+    scenario: 'Основатель стартапа читает книгу «The Lean Startup» Эрика Риса.',
+    question: 'Lean Startup — это методология для:',
+    options: [
+      'Больших компаний с устоявшимися процессами',
+      'Стартапов с неизвестной идеей — нужно быстро тестировать гипотезы',
+      'Строительных проектов',
+      'Только для IT-компаний'
+    ],
+    correct: 1,
+    explanation: '✅ Lean Startup = для стартапов в условиях неопределённости! Не знаешь, зайдёт ли идея? Тестируй быстро и дёшево. Подходит для любой отрасли, не только IT!'
+  },
+
+  {
+    type: 'choice',
+    icon: '🎯',
+    title: 'Главная проблема',
+    scenario: 'Стартапер потратил <strong>год и $100,000</strong> на идеальный продукт. Выпустил — никто не купил.',
+    question: 'В чём главная ошибка?',
+    options: [
+      'Плохо сделал продукт',
+      'Не проверил гипотезу ДО больших вложений — не знал, нужно ли это людям',
+      'Мало потратил денег',
+      'Нужно было делать ещё год'
+    ],
+    correct: 1,
+    explanation: '✅ Это классическая ошибка! Потратил год на «идеальное» — а людям не нужно. Lean Startup: СНАЧАЛА проверь гипотезу быстро и дёшево (MVP), ПОТОМ вкладывай!'
+  },
+
+  {
+    type: 'choice',
+    icon: '🏗️',
+    title: 'Что такое MVP?',
+    scenario: 'Основа Lean Startup — <strong>MVP (Minimum Viable Product)</strong>.',
+    question: 'MVP — это:',
+    options: [
+      'Идеальный продукт со всеми функциями',
+      'Минимальная версия продукта, которая РАБОТАЕТ и проверяет гипотезу',
+      'Презентация идеи без кода',
+      'Бета-версия для внутреннего использования'
+    ],
+    correct: 1,
+    explanation: '✅ MVP = минимум, который РАБОТАЕТ и даёт данные! Не 10% всех функций (ничего не работает), а 100% одной главной функции. Тестируешь гипотезу!'
+  },
+
+  {
+    type: 'sort',
+    icon: '🔄',
+    title: 'Цикл Build-Measure-Learn',
+    scenario: 'В Lean Startup работают циклами <strong>Build → Measure → Learn</strong>. Это сердце методологии!',
+    question: 'Расставь этапы цикла в правильном порядке:',
+    items: [
+      { id: 'build', text: 'BUILD — делаешь MVP', icon: '🔨', order: 0 },
+      { id: 'measure', text: 'MEASURE — даёшь людям, собираешь данные', icon: '📊', order: 1 },
+      { id: 'learn', text: 'LEARN — анализируешь: работает?', icon: '🧠', order: 2 },
+      { id: 'decide', text: 'PIVOT или PERSEVERE', icon: '🎯', order: 3 }
+    ],
+    explanation: '✅ Цикл: 1️⃣ BUILD MVP 2️⃣ MEASURE (тестируй с реальными людьми) 3️⃣ LEARN (что показали данные?) 4️⃣ Решение: PIVOT (меняй идею) или PERSEVERE (продолжай)!'
+  },
+
+  {
+    type: 'truefalse',
+    icon: '⚡',
+    title: 'Скорость в Lean Startup',
+    scenario: 'Стартап сделал MVP за <strong>2 недели</strong> вместо «идеального продукта» за год.',
+    question: 'Правда или ложь: В Lean Startup скорость важнее идеальности?',
+    correctAnswer: true,
+    explanation: '✅ ПРАВДА! Лучше быстро проверить 10 идей за 2 месяца, чем 1 год делать «идеальное» что никому не нужно. Скорость = меньше потерь!'
+  },
+
+  {
+    type: 'match',
+    icon: '🔄',
+    title: 'Pivot vs Persevere',
+    scenario: 'После тестирования MVP нужно принять решение.',
+    question: 'Соедини понятия с определениями:',
+    pairs: [
+      { left: 'PIVOT', leftId: 'pivot', right: 'Данные плохие → меняешь идею кардинально', rightId: 'change' },
+      { left: 'PERSEVERE', leftId: 'pers', right: 'Данные хорошие → продолжаешь развивать', rightId: 'continue' }
+    ],
+    explanation: '✅ PIVOT = поворот на 90° (новая идея). PERSEVERE = продолжай текущее направление. Решение принимаешь на основе ДАННЫХ, не догадок!'
+  },
+
+  {
+    type: 'choice',
+    icon: '📊',
+    title: 'Метрики в Lean Startup',
+    scenario: 'Стартап собирает данные: скачивания, активные пользователи, конверсия в оплату.',
+    question: 'Зачем нужны метрики?',
+    options: [
+      'Для красоты — можно не считать',
+      'Чтобы принимать решения на основе данных, а не догадок',
+      'Только для инвесторов',
+      'Чтобы хвастаться'
+    ],
+    correct: 1,
+    explanation: '✅ Метрики = данные для решений! Без данных: «Мне кажется люди хотят...» (ошибка!). С данными: «50% установивших удалили за день → проблема в онбординге!»'
+  },
+
+  {
+    type: 'choice',
+    icon: '🎯',
+    title: 'Примеры Pivot',
+    scenario: 'Известные компании делали Pivot! <strong>Instagram</strong> начинал как приложение для check-in (как Foursquare), потом стал фотосетью.',
+    question: 'Почему Instagram сделал Pivot?',
+    options: [
+      'Основатели заскучали',
+      'Данные показали: люди не делают check-in, зато постят фото!',
+      'Инвесторы заставили',
+      'Check-in было сложно программировать'
+    ],
+    correct: 1,
+    explanation: '✅ Данные! Люди игнорировали check-in, но активно постили фото. Основатели поняли → сделали PIVOT на фото. Это спасло компанию!'
+  },
+
+  {
+    type: 'truefalse',
+    icon: '💰',
+    title: 'Деньги в Lean Startup',
+    scenario: 'Lean Startup помогает <strong>не тратить деньги зря</strong> на ненужный продукт.',
+    question: 'Правда или ложь: Lean Startup экономит деньги и время?',
+    correctAnswer: true,
+    explanation: '✅ ПРАВДА! MVP стоит $1,000 и 2 недели. «Идеальный продукт» $100,000 и год. Если идея плохая — лучше узнать за $1,000 чем за $100,000!'
+  },
+
+  {
+    type: 'choice',
+    icon: '🏆',
+    title: 'Когда использовать Lean Startup?',
+    scenario: 'Финальный вопрос! <strong>Для чего подходит Lean Startup?</strong>',
+    question: 'Lean Startup идеален для:',
+    options: [
+      'Строительства моста — план чёткий',
+      'Стартапа с неизвестной идеей — нужно быстро тестировать гипотезы',
+      'Больших компаний с устоявшимися процессами',
+      'Когда уже знаешь что нужно людям'
+    ],
+    correct: 1,
+    explanation: '🏆 Стартап с неизвестной идеей! Lean Startup = для условий НЕОПРЕДЕЛЁННОСТИ. Не знаешь зайдёт ли? Делай MVP → тестируй → Pivot или Persevere!'
+  }
+];
+
+// ════════════════════════════════════════════════════════════════
+//  GAME STATE & LOGIC
+// ════════════════════════════════════════════════════════════════
+let currentGame = null;
+let tasks = [];
+let taskIdx = 0;
+let score = 0;
+let answered = false;
+
+// Choice
+let selectedChoice = -1;
+
+// Sort
+let dragItem = null;
+let slots = [];
+
+// Match
+let matchSel = null;
+let matchPairs = [];
+let matchCount = 0;
+
+// TF
+let tfAnswer = null;
+
+function startGame(game) {
+  currentGame = game;
+  taskIdx = 0;
+  score = 0;
+  answered = false;
+
+  if (game === 'waterfall') tasks = WATERFALL;
+  else if (game === 'agile') tasks = AGILE;
+  else if (game === 'scrum') tasks = SCRUM;
+  else if (game === 'lean') tasks = LEAN_STARTUP;
+
+  document.body.className = game;
+  showScreen('gameScreen');
+  updateProgress();
+  renderTask();
+}
+
+function backToMenu() {
+  document.body.className = 'menu';
+  showScreen('menuScreen');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id === 'menuScreen' ? 'menuScreen' : 'gameScreen').classList.add('active');
+}
+
+function updateProgress() {
+  const pct = (taskIdx / tasks.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('score').textContent = `${score}/${tasks.length}`;
+  
+  const labels = { waterfall: '🏗️ WATERFALL', agile: '🔄 AGILE', scrum: '🏃 SCRUM', lean: '💡 LEAN STARTUP' };
+  document.getElementById('progressLabel').textContent = labels[currentGame];
+}
+
+function renderTask() {
+  answered = false;
+  const t = tasks[taskIdx];
+  const container = document.getElementById('taskContainer');
+
+  let html = `
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-icon">${t.icon}</div>
+        <div class="task-info">
+          <div class="task-num">Вопрос ${taskIdx + 1} из ${tasks.length}</div>
+          <div class="task-title">${t.title}</div>
+        </div>
+      </div>
+      <div class="task-scenario">${t.scenario}</div>
+      <div class="task-question">${t.question}</div>
+  `;
+
+  if (t.type === 'choice') {
+    html += '<div class="choices">';
+    t.options.forEach((opt, i) => {
+      html += `
+        <button class="choice" onclick="selectChoice(${i})">
+          <span class="choice-ltr">${String.fromCharCode(65 + i)}</span>
+          <span>${opt}</span>
+        </button>
+      `;
+    });
+    html += '</div>';
+  }
+  
+  else if (t.type === 'sort') {
+    html += '<div class="sort-pool" id="pool"></div>';
+    html += '<div class="sort-slots" id="slotsArea"></div>';
+  }
+  
+  else if (t.type === 'match') {
+    html += '<div class="match-grid"><div class="match-col" id="leftCol"></div><div class="match-col" id="rightCol"></div></div>';
+  }
+  
+  else if (t.type === 'truefalse') {
+    html += `
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="selectTF(true)">
+          <span class="tf-icon">✅</span>
+          ПРАВДА
+        </button>
+        <button class="tf-btn" onclick="selectTF(false)">
+          <span class="tf-icon">❌</span>
+          ЛОЖЬ
+        </button>
+      </div>
+    `;
+  }
+
+  html += '<div class="feedback" id="feedback"></div>';
+  html += `
+    <div class="actions">
+      <button class="btn btn-check" id="btnCheck" onclick="checkAnswer()" disabled>Проверить</button>
+    </div>
+  </div>`;
+
+  container.innerHTML = html;
+
+  if (t.type === 'sort') initSort(t);
+  if (t.type === 'match') initMatch(t);
+  
+  selectedChoice = -1;
+  tfAnswer = null;
+}
+
+// ═══ CHOICE ═══
+function selectChoice(i) {
+  if (answered) return;
+  selectedChoice = i;
+  document.querySelectorAll('.choice').forEach((b, idx) => {
+    b.classList.toggle('selected', idx === i);
+  });
+  document.getElementById('btnCheck').disabled = false;
+}
+
+// ═══ SORT ═══
+function initSort(t) {
+  const pool = document.getElementById('pool');
+  const slotsArea = document.getElementById('slotsArea');
+  slots = t.items.map(() => null);
+  
+  const shuffled = [...t.items].sort(() => Math.random() - 0.5);
+  
+  shuffled.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'sort-item';
+    div.draggable = true;
+    div.dataset.id = item.id;
+    div.innerHTML = `<span class="sort-item-icon">${item.icon}</span><span>${item.text}</span>`;
+    div.ondragstart = e => { dragItem = e.target; e.target.classList.add('dragging'); };
+    div.ondragend = e => { e.target.classList.remove('dragging'); dragItem = null; };
+    pool.appendChild(div);
+  });
+  
+  t.items.forEach((_, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'sort-slot';
+    slot.dataset.slot = i;
+    slot.innerHTML = `<span class="sort-slot-num">${i+1}</span><span style="color:#9CA3AF">Перетащи сюда</span>`;
+    slot.ondragover = e => { e.preventDefault(); e.currentTarget.classList.add('over'); };
+    slot.ondragleave = e => e.currentTarget.classList.remove('over');
+    slot.ondrop = e => dropSort(e, i);
+    slotsArea.appendChild(slot);
+  });
+  
+  checkSortFilled();
+}
+
+function dropSort(e, slotIdx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  if (!dragItem) return;
+  
+  const slot = e.currentTarget;
+  
+  if (slots[slotIdx]) document.getElementById('pool').appendChild(slots[slotIdx]);
+  
+  slots.forEach((item, i) => { if (item === dragItem) slots[i] = null; });
+  
+  slots[slotIdx] = dragItem;
+  slot.innerHTML = '';
+  slot.appendChild(dragItem);
+  slot.classList.add('filled');
+  
+  checkSortFilled();
+}
+
+function checkSortFilled() {
+  const filled = slots.every(s => s !== null);
+  document.getElementById('btnCheck').disabled = !filled;
+}
+
+// ═══ MATCH ═══
+function initMatch(t) {
+  matchSel = null;
+  matchPairs = t.pairs;
+  matchCount = 0;
+  
+  const leftCol = document.getElementById('leftCol');
+  const rightCol = document.getElementById('rightCol');
+  
+  const rightShuffled = [...t.pairs].sort(() => Math.random() - 0.5);
+  
+  t.pairs.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    div.dataset.id = p.leftId;
+    div.dataset.side = 'left';
+    div.innerHTML = `<span class="match-icon">➤</span><span>${p.left}</span>`;
+    div.onclick = () => selectMatch(div, p.leftId, 'left');
+    leftCol.appendChild(div);
+  });
+  
+  rightShuffled.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    div.dataset.id = p.rightId;
+    div.dataset.side = 'right';
+    div.innerHTML = `<span>${p.right}</span>`;
+    div.onclick = () => selectMatch(div, p.rightId, 'right');
+    rightCol.appendChild(div);
+  });
+  
+  document.getElementById('btnCheck').disabled = true;
+}
+
+function selectMatch(elem, id, side) {
+  if (elem.classList.contains('matched')) return;
+  
+  if (!matchSel) {
+    document.querySelectorAll('.match-item').forEach(m => m.classList.remove('selected'));
+    elem.classList.add('selected');
+    matchSel = { elem, id, side };
+  } else {
+    if (matchSel.side === side) {
+      matchSel.elem.classList.remove('selected');
+      elem.classList.add('selected');
+      matchSel = { elem, id, side };
+    } else {
+      const pair = matchPairs.find(p => 
+        (p.leftId === matchSel.id && p.rightId === id) ||
+        (p.leftId === id && p.rightId === matchSel.id)
+      );
+      
+      if (pair) {
+        matchSel.elem.classList.add('matched');
+        matchSel.elem.classList.remove('selected');
+        elem.classList.add('matched');
+        matchCount++;
+        
+        if (matchCount === matchPairs.length) {
+          document.getElementById('btnCheck').disabled = false;
+        }
+      } else {
+        matchSel.elem.classList.remove('selected');
+      }
+      matchSel = null;
+    }
+  }
+}
+
+// ═══ TRUE/FALSE ═══
+function selectTF(val) {
+  if (answered) return;
+  tfAnswer = val;
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.getElementById('btnCheck').disabled = false;
+}
+
+// ═══ CHECK ANSWER ═══
+function checkAnswer() {
+  if (answered) {
+    nextTask();
+    return;
+  }
+  
+  answered = true;
+  const t = tasks[taskIdx];
+  let correct = false;
+  
+  if (t.type === 'choice') {
+    correct = selectedChoice === t.correct;
+    document.querySelectorAll('.choice').forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === t.correct) btn.classList.add('correct');
+      if (i === selectedChoice && !correct) btn.classList.add('wrong');
+    });
+  }
+  
+  else if (t.type === 'sort') {
+    const userOrder = slots.map(item => item.dataset.id);
+    const correctOrder = t.items.map(item => item.id);
+    correct = JSON.stringify(userOrder) === JSON.stringify(correctOrder);
+    document.querySelectorAll('.sort-item').forEach(item => item.draggable = false);
+  }
+  
+  else if (t.type === 'match') {
+    correct = matchCount === matchPairs.length;
+  }
+  
+  else if (t.type === 'truefalse') {
+    correct = tfAnswer === t.correctAnswer;
+    document.querySelectorAll('.tf-btn').forEach(btn => {
+      btn.disabled = true;
+      const btnVal = btn.textContent.includes('ПРАВДА');
+      if (btnVal === t.correctAnswer) btn.classList.add('correct');
+      if (btnVal === tfAnswer && !correct) btn.classList.add('wrong');
+    });
+  }
+  
+  if (correct) score++;
+  
+  showFeedback(correct, t.explanation);
+  updateProgress();
+  
+  const btn = document.getElementById('btnCheck');
+  btn.textContent = taskIdx === tasks.length - 1 ? 'Финиш!' : 'Далее →';
+  btn.classList.remove('btn-check');
+  btn.classList.add('btn-next');
+  btn.disabled = false;
+}
+
+function showFeedback(correct, text) {
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = `
+    <div class="feedback-hdr">
+      <span class="feedback-icon">${correct ? '🎉' : '💡'}</span>
+      <span>${correct ? 'Правильно!' : 'Не совсем...'}</span>
+    </div>
+    <div class="feedback-text">${text}</div>
+  `;
+}
+
+function nextTask() {
+  taskIdx++;
+  if (taskIdx >= tasks.length) {
+    showFinal();
+  } else {
+    renderTask();
+    updateProgress();
+  }
+}
+
+// ═══ FINAL ═══
+function showFinal() {
+  const pct = score / tasks.length;
+  let emoji, title, sub;
+  
+  if (pct === 1) {
+    emoji = '🏆'; title = 'Идеально!';
+    sub = 'Ты знаешь эту методологию на 100%!';
+  } else if (pct >= 0.8) {
+    emoji = '🎉'; title = 'Отлично!';
+    sub = 'Почти идеально! Пара мелочей — и будет 10/10.';
+  } else if (pct >= 0.6) {
+    emoji = '😊'; title = 'Хорошо!';
+    sub = 'Основы понятны. Повтори сложные вопросы!';
+  } else {
+    emoji = '💪'; title = 'Есть куда расти!';
+    sub = 'Пройди ещё раз — с каждым разом будет лучше!';
+  }
+  
+  const insights = {
+    waterfall: 'Waterfall = последовательные этапы, план не меняется. Подходит для проектов где всё известно заранее и нельзя ошибиться (строительство, авиация).',
+    agile: 'Agile = философия гибкости. Итерации, обратная связь, изменения приветствуются. Подходит для стартапов, приложений, игр.',
+    scrum: 'Scrum = конкретная реализация Agile. Спринты 1-2 недели, 3 роли, 4 встречи. Подходит для команд 3-9 человек.',
+    lean: 'Lean Startup = методология для условий неопределённости. MVP → тестирование → Pivot/Persevere. Подходит для стартапов с неизвестной идеей.'
+  };
+  
+  document.getElementById('taskContainer').innerHTML = `
+    <div class="final-card">
+      <span class="final-emoji">${emoji}</span>
+      <div class="final-title">${title}</div>
+      <p class="final-sub">${sub}</p>
+      <div class="final-score-box">
+        <div class="final-score-big">${score} / ${tasks.length}</div>
+        <div class="final-score-label">Правильных ответов</div>
+      </div>
+      <div class="insight">
+        <div class="insight-title">💡 Главное</div>
+        <div class="insight-text">${insights[currentGame]}</div>
+      </div>
+      <button class="btn btn-next" onclick="backToMenu()" style="width:100%">← Вернуться в меню</button>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
